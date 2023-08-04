@@ -41,11 +41,12 @@ stages:
 
 - stage: 'Deploy'
   displayName: 'Deployment to Dev'
+  dependsOn: Build
   jobs:
   - deployment: Deploy
     displayName: Deploy to AKS
     pool:
-      name: 'Demo'   
+      vmImage: $(vmImageName)   
     environment: 'Dev'
     strategy:
       runOnce:
