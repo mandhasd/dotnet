@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnetdemo
+  namespace: mynamespace
+  labels:
+    app: dotnetdemo
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: dotnetdemo
+  template:
+    metadata:
+      labels:
+        app: dotnetdemo
+        devops: agent
+    spec:
+      nodeSelector:
+        devops: agent # Add the label selector to target specific nodes
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: devops
+                operator: In
+                values:
+                - node-1  # Add the names of the nodes where you want to schedule the pods
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: environment
+                operator: In
+                values:
+                - someValue
+      containers:
+      - name: dotnetdemo
+        image: mandhasd/dotnetdemo:1.0
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "300Mi"
+          requests:
+            cpu: "100m"
+            memory: "300Mi"
+        livenessProbe:
+          exec:
+            command:
+            - ls
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          exec:
+            command:
+            - ls
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+          timeoutSeconds: 2
+        env:
+        - name: APP_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: my-configmap
+              key: APP_CONFIG
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: my-secrets
+              key: username

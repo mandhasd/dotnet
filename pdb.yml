@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: dotnetdemo-pdb
+  namespace: mynamespace
+spec:
+  minAvailable: 1  # Change this value according to your availability requirements
+  selector:
+    matchLabels:
+      app: dotnetdemo
