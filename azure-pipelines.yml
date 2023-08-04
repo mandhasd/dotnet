@@ -4,12 +4,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- develop
-- feature/*
-- master
+- main
 
-pool:
-  name: 'Demo'
+resources:
+- repo: self
 
 variables:
   buildConfiguration: 'Release'
