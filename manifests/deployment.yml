@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: mandhasddotnet 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mandhasddotnet
+  template:
+    metadata:
+      labels:
+        app: mandhasddotnet 
+    spec:
+      containers:
+        - name: mandhasddotnet 
+          image: myregistry00.azurecr.io/mandhasddotnet
+          ports:
+          - containerPort: 5000
